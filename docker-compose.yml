@@ -1,0 +1,32 @@
+version: "3"
+services:
+    web:
+        image: nginx:latest
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
+            - ./cep-api:/cep-api
+        links:
+            - php
+    php:
+        build:
+            context: .
+            dockerfile: PHP.Dockerfile
+        volumes:
+            - ./cep-api:/cep-api
+        links:
+            - mysql
+    mysql:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: 'passwd'
+            MYSQL_USER: 'userLaravelApi'
+            MYSQL_PASSWORD: 'passwd'
+            MYSQL_DATABASE: 'laravelapi'
+        volumes:
+            - mysqldata:/var/lib/mysql
+        ports:
+            - 3306:3306
+volumes:
+    mysqldata: {}
